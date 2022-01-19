@@ -1,0 +1,5 @@
+/node_modules/
+/.codesandbox/
+/dist
+.idea
+.cache
