@@ -1,47 +1,47 @@
 <template>
   <div class="CreateWorkout">
-    <Step
+    <Exercise
         v-for="step in steps"
         :data="step"
         :key="step.order"
         @step-removed="handleRemoveStep"
         @step-changed="handleStepChanged"
-    ></Step>
+    ></Exercise>
     <AddStep @step-added="handleAddStep"></AddStep>
   </div>
 </template>
 
 <script>
-import Step from "./Step";
+import Exercise from "./Exercise";
 import AddStep from "./AddStep";
 
 export default {
   name: "CreateWorkout",
-  components: {Step, AddStep},
+  components: {Exercise, AddStep},
   data() {
     return {
-      steps: this.$workoutService.getSteps(),
+      steps: this.$workoutService.exercises,
     };
   },
   beforeCreate() {
-    if (!this.$workoutService.hasSteps()) {
-      this.$workoutService.addStep();
+    if (!this.$workoutService.hasExercise()) {
+      this.$workoutService.addExercise();
     }
   },
   methods: {
     handleAddStep() {
-      this.$workoutService.addStep();
+      this.$workoutService.addExercise();
       this.handleStepsChanged();
     },
     handleRemoveStep(step) {
-      this.$workoutService.removeStep(step);
+      this.$workoutService.removeExercise(step);
       this.handleStepsChanged();
     },
     handleStepChanged(step) {
-      this.$workoutService.updateStep(step);
+      this.$workoutService.updateExercise(step);
     },
     handleStepsChanged() {
-      this.steps = this.$workoutService.getSteps();
+      this.steps = this.$workoutService.exercises;
     },
   },
 }

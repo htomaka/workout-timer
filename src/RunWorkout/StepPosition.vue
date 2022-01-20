@@ -1,5 +1,5 @@
 <template>
-<p>Step {{position}}</p>
+<p>Exercise {{position}}</p>
 </template>
 
 <script>

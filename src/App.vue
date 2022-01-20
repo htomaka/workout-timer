@@ -2,7 +2,7 @@
   <div class="container">
     <h1>Workout timer</h1>
     <CreateWorkout v-if="mode === 'idle'"></CreateWorkout>
-    <WorkoutControls></WorkoutControls>
+    <WorkoutControls v-if="mode === 'idle'"></WorkoutControls>
     <RunWorkout v-if="mode === 'running'"></RunWorkout>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
     WorkoutControls,
     CreateWorkout
   },
-  data(){
+  data() {
     return {
       mode: 'idle'
     }

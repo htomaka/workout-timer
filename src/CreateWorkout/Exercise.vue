@@ -36,7 +36,7 @@
 <script>
 
 export default {
-  name: "Step",
+  name: "Exercise",
   props: {
     data: Object,
   },

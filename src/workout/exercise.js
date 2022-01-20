@@ -1,7 +1,7 @@
 import {nullDuration} from "./duration";
 
 
-class Step {
+class Exercise {
     create(activity, order, durationObj, description) {
         return {activity, order, description, duration: this._normalizeDuration({...nullDuration, ...durationObj})}
     }
@@ -14,6 +14,6 @@ class Step {
     }
 }
 
-export default new Step();
+export default new Exercise();
 
 

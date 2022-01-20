@@ -1,55 +1,48 @@
 import * as duration from "duration-fns";
-import Step from "./step"
+import Exercise from "./exercise"
 import {nullDuration} from "./duration";
 
 export default class Workout {
     constructor(timer, domainEvents) {
         this.name = "";
-        this._steps = [];
-        this._currentStepIndex = 0;
+        this._exercises = [];
+        this._currentExerciseIndex = 0;
         this._timer = timer;
         this._nextDuration = null;
-        this._domainEvents = domainEvents;
+        this._workoutEvents = domainEvents;
+    }
+
+    get _currentExercise() {
+        return this._exercises[this._currentExerciseIndex]
+    }
+
+    get exercises() {
+        return this._exercises;
     }
 
     start() {
-        this._currentStepIndex = 0;
-        this._nextDuration = this._steps[this._currentStepIndex]['duration'];
-        this._timer.start(() => {
-            console.log('step', this.getCurrentStepPosition())
-            if (this._currentStepIndex < this._steps.length) {
-                this._nextDuration = duration.normalize(duration.subtract(this._nextDuration, {seconds: 1}));
-                this._domainEvents.$emit('clock::tick', {
-                    ...this._steps[this._currentStepIndex],
-                    duration: this._nextDuration
-                });
-
-                if (this._nextDuration.seconds === 0) {
-                    this.playNext();
-                }
-            } else {
-                this.stop();
-            }
-        });
-        this._domainEvents.$emit('workout::started');
+        this._currentExerciseIndex = 0;
+        this._nextDuration = this._currentExercise.duration;
+        this._timer.start(() => this._onTick());
+        this._workoutEvents.$emit('workout::started');
     }
 
     stop() {
         console.log('workout finished');
         this._timer.stop();
-        this._domainEvents.$emit('workout::stopped');
+        this._workoutEvents.$emit('workout::stopped');
     }
 
     save() {
         throw new Error('not implemented');
     }
 
-    addStep() {
-        this._steps = [...this._steps, Step.create('warmup', this.getNextStep(), nullDuration, 'Slow pace')];
+    addExercise() {
+        this._exercises = [...this._exercises, Exercise.create('warmup', this._getNextOrder(), nullDuration, 'Slow pace')];
     }
 
-    removeStep(step) {
-        this._steps = this._steps
+    removeExercise(step) {
+        this._exercises = this._exercises
             .filter((s) => {
                 return s.order !== step.order;
             })
@@ -59,35 +52,54 @@ export default class Workout {
             });
     }
 
-    updateStep(step) {
-        this._steps = this._steps.map((s) => {
+    updateExercise(step) {
+        this._exercises = this._exercises.map((s) => {
             if (step.order === s.order) {
-                return Step.create(step.activity, step.order, step.duration, step.description);
+                return Exercise.create(step.activity, step.order, step.duration, step.description);
             }
 
             return s;
         });
     }
 
-    getNextStep() {
-        return this._steps.length + 1;
+    hasExercise() {
+        return !!this._exercises.length;
     }
 
-    getSteps() {
-        return this._steps;
+    getRemainingCount() {
+        return (this._exercises.length - this._currentExercise.order) + 1;
     }
 
-    hasSteps() {
-        return !!this._steps.length;
+    _playNext() {
+        this._currentExerciseIndex++;
+        this._nextDuration = this._currentExercise.duration;
+        this._workoutEvents.$emit('workout::nextExerciseStarted', this._currentExercise);
+        console.log('play next', this._currentExercise.order);
     }
 
-    getCurrentStepPosition() {
-        return this._steps.length - this._currentStepIndex;
+    _updateDuration() {
+        this._nextDuration = duration.normalize(duration.subtract(this._nextDuration, {seconds: 1}));
+        this._workoutEvents.$emit('clock::tick', {
+            ...this._currentExercise,
+            duration: this._nextDuration
+        });
     }
 
-    playNext() {
-        console.log('play next');
-        this._nextDuration = this._steps[this._currentStepIndex++]['duration'];
-        this._domainEvents.$emit('workout::nextExerciseStarted', this._steps[this._currentStepIndex]);
+    _getNextOrder() {
+        return this._exercises.length + 1;
+    }
+
+    _onTick() {
+        if (this._nextDuration.seconds > 0) {
+            this._updateDuration();
+        } else if (this._hasNextExercice()) {
+            this._playNext();
+        } else {
+            this.stop();
+        }
+    }
+
+    _hasNextExercice() {
+        return !!this._exercises[this._currentExerciseIndex + 1];
     }
 }

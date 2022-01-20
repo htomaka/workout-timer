@@ -16,8 +16,8 @@ export default {
   components: {Timer, StopWorkout},
   data() {
     return {
-      exercise: this.$workoutService.getSteps()[0],
-      duration: this.$workoutService.getSteps()[0]['duration']
+      exercise: this.$workoutService.exercises[0],
+      duration: this.$workoutService.exercises[0]['duration']
     }
   },
   created() {
@@ -25,7 +25,7 @@ export default {
       this.duration = step.duration
     });
     eventBus.$on('workout::nextExerciseStarted', (step) => {
-      this.currentStepPosition = this.$workoutService.getCurrentStepPosition();
+      this.currentStepPosition = this.$workoutService.getRemainingCount();
       this.exercise = step;
     });
   },
@@ -36,7 +36,7 @@ export default {
   methods: {
     handleStopWorkout() {
       this.$workoutService.stop();
-    }
+    },
   }
 }
 </script>
