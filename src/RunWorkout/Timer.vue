@@ -1,15 +1,15 @@
 <template>
-  <p style="font-size: 3rem">{{ counter }}</p>
+  <p style="font-size: 3rem">{{ timer }}</p>
 </template>
 
 <script>
 export default {
-  name: "Countdown",
+  name: "Timer",
   props: {
     duration: Object,
   },
   computed: {
-    counter() {
+    timer() {
       if (!this.duration) {
         return `00:00s`
       }

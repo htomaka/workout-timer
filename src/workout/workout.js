@@ -3,36 +3,41 @@ import Step from "./step"
 import {nullDuration} from "./duration";
 
 export default class Workout {
-    constructor(timer) {
+    constructor(timer, domainEvents) {
         this.name = "";
         this._steps = [];
         this._currentStepIndex = 0;
         this._timer = timer;
         this._nextDuration = null;
+        this._domainEvents = domainEvents;
     }
 
-    start(onTick, onNext) {
+    start() {
         this._currentStepIndex = 0;
         this._nextDuration = this._steps[this._currentStepIndex]['duration'];
         this._timer.start(() => {
             console.log('step', this.getCurrentStepPosition())
             if (this._currentStepIndex < this._steps.length) {
                 this._nextDuration = duration.normalize(duration.subtract(this._nextDuration, {seconds: 1}));
-                onTick({...this._steps[this._currentStepIndex], duration: this._nextDuration});
+                this._domainEvents.$emit('clock::tick', {
+                    ...this._steps[this._currentStepIndex],
+                    duration: this._nextDuration
+                });
 
                 if (this._nextDuration.seconds === 0) {
                     this.playNext();
-                    onNext();
                 }
             } else {
                 this.stop();
             }
         });
+        this._domainEvents.$emit('workout::started');
     }
 
     stop() {
         console.log('workout finished');
         this._timer.stop();
+        this._domainEvents.$emit('workout::stopped');
     }
 
     save() {
@@ -83,5 +88,6 @@ export default class Workout {
     playNext() {
         console.log('play next');
         this._nextDuration = this._steps[this._currentStepIndex++]['duration'];
+        this._domainEvents.$emit('workout::nextExerciseStarted', this._steps[this._currentStepIndex]);
     }
 }
