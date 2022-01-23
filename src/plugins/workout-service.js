@@ -4,7 +4,6 @@ import eventBus from "../utils/event-bus";
 
 export default {
     install(Vue, options) {
-        console.log('install')
         const timer = new Timer(1000);
         Vue.prototype.$workoutService = new Workout(timer, eventBus);
     }
