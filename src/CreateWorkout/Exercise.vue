@@ -1,35 +1,40 @@
 <template>
-  <div class="Step">
-    <form @change="handleChange()">
-      <input
-          type="text"
-          placeholder="fast"
-          aria-label="description"
-          v-model="model.description"
-      />
-      <select v-model="model.activity">
-        <option value="getReady">Get ready</option>
-        <option value="warmup">Warmup</option>
-        <option value="rest">Rest</option>
-        <option value="work">Work</option>
-        <option value="cooldown">Cool down</option>
-      </select>
-      <input
-          type="number"
-          placeholder="mm"
-          aria-label="minutes"
-          min="0"
-          v-model="model.duration.minutes"
-      />
-      <input
-          type="number"
-          placeholder="ss"
-          aria-label="seconds"
-          min="0"
-          v-model="model.duration.seconds"
-      />
+  <div>
+    <form @change="handleChange()" class="grid">
+      <div class="field">
+        <label class="sr-only" for="activity">activity</label>
+        <select v-model="model.activity" id="activity">
+          <option value="getReady">Get ready</option>
+          <option value="warmup">Warmup</option>
+          <option value="rest">Rest</option>
+          <option value="work">Work</option>
+          <option value="cooldown">Cool down</option>
+        </select>
+      </div>
+      <div class="time-picker">
+        <div class="field">
+          <label class="sr-only" for="minutes">minutes</label>
+          <input
+              type="number"
+              id="minutes"
+              placeholder="00"
+              min="0"
+              v-model="model.duration.minutes"
+          />
+        </div>
+        <div class="field">
+          <label class="sr-only" for="seconds">seconds</label>
+          <input
+              type="number"
+              id="seconds"
+              placeholder="00"
+              min="0"
+              v-model="model.duration.seconds"
+          />
+        </div>
+      </div>
     </form>
-    <button @click="handleRemoveStep()">X</button>
+    <button @click="handleRemove()"><span class="material-icons">delete</span></button>
   </div>
 </template>
 
@@ -46,18 +51,37 @@ export default {
     },
   },
   methods: {
-    handleRemoveStep() {
-      this.$emit("step-removed", this.data);
+    handleRemove() {
+      this.$emit("removed", this.data);
     },
     handleChange() {
-      this.$emit("step-changed", {...this.model});
+      this.$emit("changed", {...this.model});
     },
   },
 };
 </script>
 
 <style scoped>
-.Step {
-  display: flex;
+
+.time-picker {
+  display: grid;
+  position: relative;
+  align-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-gap: var(--spacing);
 }
+
+.time-picker input {
+  max-width: 100%;
+}
+
+.time-picker .field:first-child:after {
+  content: ":";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
 </style>

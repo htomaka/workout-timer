@@ -90,7 +90,7 @@ export default class Workout {
     }
 
     _onTick() {
-        if (this._nextDuration.seconds > 0) {
+        if (this._hasTimeLeft()) {
             this._updateDuration();
         } else if (this._hasNextExercice()) {
             this._playNext();
@@ -101,5 +101,9 @@ export default class Workout {
 
     _hasNextExercice() {
         return !!this._exercises[this._currentExerciseIndex + 1];
+    }
+
+    _hasTimeLeft() {
+        return (this._nextDuration.minutes * 60 + this._nextDuration.seconds) > 0;
     }
 }

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App";
 import workoutService from "./plugins/workout-service";
+import "./assets/main.css"
 
 Vue.config.productionTip = false;
 Vue.use(workoutService, {});

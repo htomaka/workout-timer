@@ -1,15 +1,15 @@
 <template>
   <div class="container">
-    <h1>Workout timer</h1>
+    <h1>Workout countdown</h1>
     <CreateWorkout v-if="mode === 'idle'"></CreateWorkout>
-    <WorkoutControls v-if="mode === 'idle'"></WorkoutControls>
-    <RunWorkout v-if="mode === 'running'"></RunWorkout>
+    <div class="grid">
+      <WorkoutControls v-if="mode === 'idle'"></WorkoutControls>
+      <RunWorkout v-if="mode === 'running'"></RunWorkout>
+    </div>
   </div>
 </template>
 
 <script>
-
-
 import RunWorkout from "./RunWorkout/RunWorkout";
 import WorkoutControls from "./WorkoutControls/WorkoutControls";
 import CreateWorkout from "./CreateWorkout/CreateWorkout";
@@ -39,8 +39,5 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  max-width: 45rem;
-  margin: 0 auto;
-}
+
 </style>

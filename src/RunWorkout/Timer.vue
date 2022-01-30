@@ -1,19 +1,21 @@
 <template>
-  <p style="font-size: 3rem">{{ timer }}</p>
+  <p>{{ countdown }}</p>
 </template>
 
 <script>
+import {padStart} from "../utils/pad-start";
+
 export default {
   name: "Timer",
   props: {
     duration: Object,
   },
   computed: {
-    timer() {
+    countdown() {
       if (!this.duration) {
-        return `00:00s`
+        return `00:00`
       }
-      return `${this.duration.minutes}: ${this.duration.seconds}s`
+      return `${padStart(this.duration.minutes, 2, '0')}: ${padStart(this.duration.seconds, 2, '0')}`
     }
   }
 }

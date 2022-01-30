@@ -1,14 +1,14 @@
 <template>
   <div>
-    <button @click="handlePlay()">Play</button>
+    <button @click="handleStart()">Play</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: "PlayWorkout",
+  name: "StartWorkout",
   methods: {
-    handlePlay() {
+    handleStart() {
       this.$emit("started");
     },
   },

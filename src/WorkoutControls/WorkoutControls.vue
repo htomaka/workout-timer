@@ -1,20 +1,20 @@
 <template>
-  <div class="flex-container">
-    <PlayWorkout @started="handleStartWorkout"></PlayWorkout>
+  <div class="button-group">
+    <StartWorkout @started="handleStart"></StartWorkout>
     <SaveWorkout></SaveWorkout>
   </div>
 </template>
 
 <script>
 
-import PlayWorkout from "./PlayWorkout";
+import StartWorkout from "./StartWorkout";
 import SaveWorkout from "../CreateWorkout/SaveWorkout";
 
 export default {
   name: "WorkoutControls",
-  components: {PlayWorkout, SaveWorkout},
+  components: {StartWorkout, SaveWorkout},
   methods: {
-    handleStartWorkout() {
+    handleStart() {
       this.$workoutService.start();
     },
   }
@@ -22,7 +22,5 @@ export default {
 </script>
 
 <style scoped>
-.flex-container {
-  display: flex;
-}
+
 </style>
