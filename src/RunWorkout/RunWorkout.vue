@@ -7,35 +7,36 @@
 </template>
 
 <script>
-import eventBus from "../utils/event-bus";
 import StopWorkout from "../WorkoutControls/StopWorkout";
 import Timer from "./Timer";
+import {WORKOUT_EVENTS} from "@/workout/workout";
 
 export default {
   name: "RunWorkout",
   components: {Timer, StopWorkout},
+  inject: ['workout'],
   data() {
     return {
-      exercise: this.$workoutService.exercises[0],
-      duration: this.$workoutService.exercises[0]['duration']
+      exercise: this.workout.exercises[0],
+      duration: this.workout.exercises[0]['duration']
     }
   },
   created() {
-    eventBus.$on('clock::tick', step => {
+    this.workout.on(WORKOUT_EVENTS.TICK, step => {
       this.duration = step.duration
     });
-    eventBus.$on('workout::nextExerciseStarted', (step) => {
-      this.currentStepPosition = this.$workoutService.getRemainingCount();
+    this.workout.on(WORKOUT_EVENTS.NEXT_EXERCISE_STARTED, (step) => {
+      this.currentStepPosition = this.workout.getRemainingCount();
       this.exercise = step;
     });
   },
-  destroyed() {
-    eventBus.$off('clock::tick');
-    eventBus.$off('workout::nextExerciseStarted');
+  unmounted() {
+    this.workout.off(WORKOUT_EVENTS.TICK);
+    this.workout.off(WORKOUT_EVENTS.NEXT_EXERCISE_STARTED);
   },
   methods: {
     handleStopWorkout() {
-      this.$workoutService.stop();
+      this.workout.stop();
     },
   }
 }

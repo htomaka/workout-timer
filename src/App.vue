@@ -13,7 +13,7 @@
 import RunWorkout from "./RunWorkout/RunWorkout";
 import WorkoutControls from "./WorkoutControls/WorkoutControls";
 import CreateWorkout from "./CreateWorkout/CreateWorkout";
-import eventBus from "./utils/event-bus";
+import {WORKOUT_EVENTS} from "@/workout/workout";
 
 export default {
   name: "App",
@@ -22,18 +22,19 @@ export default {
     WorkoutControls,
     CreateWorkout
   },
+  inject: ['workout'],
   data() {
     return {
       mode: 'idle'
     }
   },
-  created() {
-    eventBus.$on('workout::started', () => this.mode = 'running');
-    eventBus.$on('workout::stopped', () => this.mode = 'idle');
+  beforeMount() {
+    this.workout.on(WORKOUT_EVENTS.STARTED, () => this.mode = 'running');
+    this.workout.on(WORKOUT_EVENTS.STOPPED, () => this.mode = 'idle');
   },
-  destroyed() {
-    eventBus.$off('workout::started');
-    eventBus.$off('workout::stopped');
+  unmounted() {
+    this.workout.off(WORKOUT_EVENTS.STARTED);
+    this.workout.off(WORKOUT_EVENTS.STOPPED);
   }
 };
 </script>

@@ -13,9 +13,10 @@ import SaveWorkout from "../CreateWorkout/SaveWorkout";
 export default {
   name: "WorkoutControls",
   components: {StartWorkout, SaveWorkout},
+  inject: ['workout'],
   methods: {
     handleStart() {
-      this.$workoutService.start();
+      this.workout.start();
     },
   }
 }

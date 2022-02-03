@@ -18,30 +18,31 @@ import AddExercise from "./AddExercise";
 export default {
   name: "CreateWorkout",
   components: {AddExercise, Exercise},
+  inject: ['workout'],
   data() {
     return {
-      exercises: this.$workoutService.exercises,
+      exercises: this.workout.exercises,
     };
   },
-  beforeCreate() {
-    if (!this.$workoutService.hasExercise()) {
-      this.$workoutService.addExercise();
+  created() {
+    if (!this.workout.hasExercise()) {
+      this.workout.addExercise();
     }
   },
   methods: {
     handleAdd() {
-      this.$workoutService.addExercise();
+      this.workout.addExercise();
       this.handleWorkoutChanged();
     },
     handleRemove(exercise) {
-      this.$workoutService.removeExercise(exercise);
+      this.workout.removeExercise(exercise);
       this.handleWorkoutChanged();
     },
     handleChanged(exercise) {
-      this.$workoutService.updateExercise(exercise);
+      this.workout.updateExercise(exercise);
     },
     handleWorkoutChanged() {
-      this.exercises = this.$workoutService.exercises;
+      this.exercises = this.workout.exercises;
     },
   },
 }

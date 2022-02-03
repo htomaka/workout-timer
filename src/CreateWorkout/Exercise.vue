@@ -34,7 +34,7 @@
         </div>
       </div>
     </form>
-    <button @click="handleRemove()"><span class="material-icons">delete</span></button>
+    <button @click="handleRemove()" class="button--link">Remove step</button>
   </div>
 </template>
 

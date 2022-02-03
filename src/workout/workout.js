@@ -1,15 +1,30 @@
 import * as duration from "duration-fns";
 import Exercise from "./exercise"
 import {nullDuration} from "./duration";
+import {TinyEmitter} from "tiny-emitter";
+import {createTimer} from '@/utils/timer';
 
-export default class Workout {
-    constructor(timer, domainEvents) {
+export const WORKOUT_EVENTS = {
+    STOPPED: 'Workout::stopped',
+    STARTED: 'Workout::started',
+    TICK: 'Workout::tick',
+    NEXT_EXERCISE_STARTED: 'Workout::nextExerciseStarted'
+}
+
+
+export function createWorkout() {
+    const timer = createTimer(1000)
+    return new Workout(timer);
+}
+
+class Workout extends TinyEmitter {
+    constructor(timer) {
+        super();
         this.name = "";
         this._exercises = [];
         this._currentExerciseIndex = 0;
         this._timer = timer;
         this._nextDuration = null;
-        this._workoutEvents = domainEvents;
     }
 
     get _currentExercise() {
@@ -24,13 +39,13 @@ export default class Workout {
         this._currentExerciseIndex = 0;
         this._nextDuration = this._currentExercise.duration;
         this._timer.start(() => this._onTick());
-        this._workoutEvents.$emit('workout::started');
+        this.emit(WORKOUT_EVENTS.STARTED);
     }
 
     stop() {
         console.log('workout finished');
         this._timer.stop();
-        this._workoutEvents.$emit('workout::stopped');
+        this.emit(WORKOUT_EVENTS.STOPPED);
     }
 
     save() {
@@ -73,13 +88,13 @@ export default class Workout {
     _playNext() {
         this._currentExerciseIndex++;
         this._nextDuration = this._currentExercise.duration;
-        this._workoutEvents.$emit('workout::nextExerciseStarted', this._currentExercise);
+        this.emit(WORKOUT_EVENTS.NEXT_EXERCISE_STARTED, this._currentExercise);
         console.log('play next', this._currentExercise.order);
     }
 
     _updateDuration() {
         this._nextDuration = duration.normalize(duration.subtract(this._nextDuration, {seconds: 1}));
-        this._workoutEvents.$emit('clock::tick', {
+        this.emit(WORKOUT_EVENTS.TICK, {
             ...this._currentExercise,
             duration: this._nextDuration
         });
