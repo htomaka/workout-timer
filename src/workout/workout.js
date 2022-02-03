@@ -53,6 +53,7 @@ class Workout extends TinyEmitter {
     }
 
     addExercise() {
+        console.log('add exercice')
         this._exercises = [...this._exercises, Exercise.create('warmup', this._getNextOrder(), nullDuration, 'Slow pace')];
     }
 

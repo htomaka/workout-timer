@@ -21,13 +21,16 @@ export default {
   inject: ['workout'],
   data() {
     return {
-      exercises: this.workout.exercises,
+      exercises: [],
     };
   },
   created() {
     if (!this.workout.hasExercise()) {
       this.workout.addExercise();
     }
+  },
+  mounted() {
+    this.exercises = this.workout.exercises;
   },
   methods: {
     handleAdd() {
