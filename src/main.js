@@ -1,6 +1,6 @@
 import {createApp} from 'vue'
 import App from './App.vue'
-import './utils/firebase';
+import './utils/db';
 import "./assets/main.css"
 import {createWorkout} from "@/workout/workout";
 

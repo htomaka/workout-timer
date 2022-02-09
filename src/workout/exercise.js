@@ -1,4 +1,5 @@
 import {nullDuration} from "./duration";
+import * as duration from 'duration-fns'
 
 
 class Exercise {
@@ -11,6 +12,10 @@ class Exercise {
             acc[key] = +durationObj[key] || 0;
             return acc;
         }, {})
+    }
+
+    toJson(activity, order, durationObj, description){
+        return {activity, order, duration: duration.toString(durationObj), description};
     }
 }
 
