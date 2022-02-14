@@ -3,7 +3,6 @@ import Exercise from "./exercise"
 import {nullDuration} from "./duration";
 import {TinyEmitter} from "tiny-emitter";
 import {createTimer} from '@/utils/timer';
-import db from '../utils/db';
 
 export const WORKOUT_EVENTS = {
     STOPPED: 'Workout::stopped',
@@ -14,19 +13,17 @@ export const WORKOUT_EVENTS = {
 
 
 export function createWorkout() {
-    const timer = createTimer(1000);
-    return new Workout(timer, db);
+    return new Workout();
 }
 
 class Workout extends TinyEmitter {
-    constructor(timer, repository) {
+    constructor() {
         super();
         this.name = "";
         this._exercises = [];
         this._currentExerciseIndex = 0;
-        this._timer = timer;
+        this._timer = createTimer(1000);
         this._nextDuration = null;
-        this._repository = repository;
     }
 
     get _currentExercise() {
@@ -50,20 +47,8 @@ class Workout extends TinyEmitter {
         this.emit(WORKOUT_EVENTS.STOPPED);
     }
 
-    save(name) {
-        console.log('save workout')
-        this.name = name;
-        return this._repository.save({
-            name: name,
-            exercises: this._exercises.map(ex => {
-                console.log(...Object.values(ex))
-                return Exercise.toJson(ex.activity, ex.order, ex.duration, ex.description)
-            })
-        });
-    }
 
     addExercise() {
-        console.log('add exercice')
         this._exercises = [...this._exercises, Exercise.create('warmup', this._getNextOrder(), nullDuration, 'Slow pace')];
     }
 

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "firebase/app";
-import {child, get, getDatabase, push, ref} from "firebase/database";
+import {child, get, getDatabase, onValue, push, ref} from "firebase/database";
 
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_FB_API_KEY,
@@ -15,17 +15,32 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const workouts = ref(db, 'workouts');
+
+function toArray(obj) {
+    return Object.keys(obj).map(key => ({
+        uuid: key,
+        ...obj[key]
+    }))
+}
+
 
 export default {
+    onChange: fn => {
+        onValue(workouts, (snapshot) => {
+            const data = toArray(snapshot.val());
+            console.log(data)
+            fn(data);
+        });
+    },
+
     async save(workout) {
-        return await push(ref(db, 'workouts'), workout);
+        return push(workouts, workout);
     },
 
     async getAll() {
-        const dbRef = ref(getDatabase());
-
         try {
-            const snapshot = await get(child(dbRef, `/workouts`));
+            const snapshot = await get(workouts);
             return snapshot.val();
         } catch (err) {
             console.error(err);

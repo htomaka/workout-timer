@@ -17,7 +17,7 @@
 <script>
 export default {
   name: "SaveWorkout",
-  inject: ['workout'],
+  inject: ['workoutService'],
   data() {
     return {
       name: ''
@@ -26,7 +26,7 @@ export default {
   methods: {
     async handleSave() {
       try {
-        await this.workout.save(this.name);
+        await this.workoutService.save(this.name);
         this.$refs.dialog.close();
       } catch (err) {
         console.error(err.message);

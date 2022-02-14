@@ -1,7 +1,7 @@
 <template>
   <div class="CreateWorkout">
     <Exercise
-        v-for="ex in exercises"
+        v-for="ex in workout.exercises"
         :data="ex"
         :key="ex.order"
         @removed="handleRemove"
@@ -17,35 +17,25 @@ import AddExercise from "./AddExercise";
 
 export default {
   name: "CreateWorkout",
+  inject: ['workoutService'],
   components: {AddExercise, Exercise},
-  inject: ['workout'],
   data() {
     return {
-      exercises: [],
+      workout: this.workoutService.currentWorkout,
     };
   },
-  created() {
+  beforeCreate() {
+    this.workoutService.create();
     if (!this.workout.hasExercise()) {
       this.workout.addExercise();
     }
   },
-  mounted() {
-    this.exercises = this.workout.exercises;
-  },
   methods: {
     handleAdd() {
       this.workout.addExercise();
-      this.handleWorkoutChanged();
     },
     handleRemove(exercise) {
       this.workout.removeExercise(exercise);
-      this.handleWorkoutChanged();
-    },
-    handleChanged(exercise) {
-      this.workout.updateExercise(exercise);
-    },
-    handleWorkoutChanged() {
-      this.exercises = this.workout.exercises;
     },
   },
 }
