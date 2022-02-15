@@ -8,12 +8,14 @@
 <script>
 
 import StartWorkout from "./StartWorkout";
-import SaveWorkout from "../CreateWorkout/SaveWorkout";
+import SaveWorkout from "./SaveWorkout";
 
 export default {
   name: "WorkoutControls",
   components: {StartWorkout, SaveWorkout},
-  inject: ['workout'],
+  props: {
+    workout: Object
+  },
   methods: {
     handleStart() {
       this.workout.start();

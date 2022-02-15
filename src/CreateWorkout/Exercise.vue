@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form @change="handleChange()" class="grid">
+    <form @change="handleChanged()" class="grid">
       <div class="field">
         <label class="sr-only" for="activity">activity</label>
         <select v-model="model.activity" id="activity">
@@ -22,6 +22,7 @@
               v-model="model.duration.minutes"
           />
         </div>
+        <span class="time-separator">:</span>
         <div class="field">
           <label class="sr-only" for="seconds">seconds</label>
           <input
@@ -34,7 +35,7 @@
         </div>
       </div>
     </form>
-    <button @click="handleRemove()" class="button--link">Remove step</button>
+    <button @click="handleRemoved()" class="button--link">Remove step</button>
   </div>
 </template>
 
@@ -44,6 +45,7 @@ export default {
   name: "Exercise",
   props: {
     data: Object,
+    workout: Object
   },
   computed: {
     model() {
@@ -51,12 +53,12 @@ export default {
     },
   },
   methods: {
-    handleRemove() {
-      this.$emit("removed", this.data);
+    handleRemoved(exercise) {
+      this.workout.removeExercise(exercise);
     },
-    handleChange() {
-      this.$emit("changed", {...this.model});
-    },
+    handleChanged(exercise){
+      this.workout.updateExercise(exercise);
+    }
   },
 };
 </script>
@@ -66,22 +68,18 @@ export default {
 .time-picker {
   display: grid;
   position: relative;
-  align-content: center;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  grid-gap: var(--spacing);
+  grid-template-columns: 1fr 1rem 1fr;
+  grid-gap: var(--spacing / 2);
+  align-items: center;
 }
 
 .time-picker input {
   max-width: 100%;
 }
 
-.time-picker .field:first-child:after {
-  content: ":";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
+.time-separator {
+  display: block;
+  justify-self: center;
 }
 
 </style>

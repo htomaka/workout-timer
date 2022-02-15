@@ -1,8 +1,8 @@
 import * as duration from "duration-fns";
 import Exercise from "./exercise"
-import {nullDuration} from "./duration";
-import {TinyEmitter} from "tiny-emitter";
-import {createTimer} from '@/utils/timer';
+import { nullDuration } from "./duration";
+import { TinyEmitter } from "tiny-emitter";
+import { createTimer } from '@/utils/timer';
 
 export const WORKOUT_EVENTS = {
     STOPPED: 'Workout::stopped',
@@ -13,16 +13,21 @@ export const WORKOUT_EVENTS = {
 
 
 export function createWorkout() {
-    return new Workout();
+    const timer = createTimer(1000);
+    const workout = new Workout(timer);
+    if (!workout.hasExercise()) {
+        workout.addExercise();
+    }
+    return workout;
 }
 
 class Workout extends TinyEmitter {
-    constructor() {
+    constructor(timer) {
         super();
         this.name = "";
         this._exercises = [];
         this._currentExerciseIndex = 0;
-        this._timer = createTimer(1000);
+        this._timer = timer;
         this._nextDuration = null;
     }
 
@@ -32,6 +37,10 @@ class Workout extends TinyEmitter {
 
     get exercises() {
         return this._exercises;
+    }
+
+    get firstExercise(){
+        return this._exercises[0];
     }
 
     start() {
@@ -63,13 +72,13 @@ class Workout extends TinyEmitter {
             });
     }
 
-    updateExercise(step) {
-        this._exercises = this._exercises.map((s) => {
-            if (step.order === s.order) {
-                return Exercise.create(step.activity, step.order, step.duration, step.description);
+    updateExercise(exercise) {
+        this._exercises = this._exercises.map((ex) => {
+            if (exercise.order === ex.order) {
+                return Exercise.create(exercise.activity, exercise.order, exercise.duration, exercise.description);
             }
 
-            return s;
+            return ex;
         });
     }
 
@@ -89,7 +98,7 @@ class Workout extends TinyEmitter {
     }
 
     _updateDuration() {
-        this._nextDuration = duration.normalize(duration.subtract(this._nextDuration, {seconds: 1}));
+        this._nextDuration = duration.normalize(duration.subtract(this._nextDuration, { seconds: 1 }));
         this.emit(WORKOUT_EVENTS.TICK, {
             ...this._currentExercise,
             duration: this._nextDuration

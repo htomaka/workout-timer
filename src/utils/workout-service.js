@@ -1,29 +1,26 @@
-import {createWorkout} from '@/workout/workout'
+import { createWorkout } from '@/workout/workout'
 
 export class WorkoutService {
     constructor(repository) {
         this._repository = repository;
-        this._currentWorkout = null;
+        this._workout = createWorkout();
     }
 
-    get currentWorkout() {
-        return this._currentWorkout;
+    getActiveWorkout() {
+        return this._workout;
     }
 
     onChange(fn) {
         this._repository.onChange(fn);
     }
 
-    create() {
-        this._currentWorkout = createWorkout({
-            name: '',
-            exercises: []
-        });
+    startWorkout(){
+        this._workout.start();
     }
 
-    async save(workout) {
+    async save() {
         try {
-            return this._repository.save(workout)
+            return this._repository.save(this._workout)
         } catch (err) {
             console.error(err);
         }
