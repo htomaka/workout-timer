@@ -12,9 +12,8 @@ export const WORKOUT_EVENTS = {
 }
 
 
-export function createWorkout() {
-    const timer = createTimer(1000);
-    const workout = new Workout(timer);
+export function createWorkout(uuid = '', name = '', exercices = []) {
+    const workout = new Workout(uuid, name, exercices);
     if (!workout.hasExercise()) {
         workout.addExercise();
     }
@@ -22,12 +21,13 @@ export function createWorkout() {
 }
 
 class Workout extends TinyEmitter {
-    constructor(timer) {
+    constructor(uuid, name, exercices) {
         super();
-        this.name = "";
-        this._exercises = [];
+        this.uuid = uuid;
+        this.name = name;
+        this._exercises = exercices;
         this._currentExerciseIndex = 0;
-        this._timer = timer;
+        this._timer = createTimer(1000);
         this._nextDuration = null;
     }
 
@@ -39,7 +39,7 @@ class Workout extends TinyEmitter {
         return this._exercises;
     }
 
-    get firstExercise(){
+    get firstExercise() {
         return this._exercises[0];
     }
 

@@ -10,11 +10,18 @@ export class WorkoutService {
         return this._workout;
     }
 
-    onChange(fn) {
-        this._repository.onChange(fn);
+    setActiveWorkout(workoutId) {
+        const activeWorkout = this._repository.getOne(workoutId);
+        this._workout = activeWorkout;
     }
 
-    startWorkout(){
+    onChange(fn) {
+        this._repository.onChange(workoutsDTO => {
+            return fn(workoutsDTO.map(this._fromJson.bind(this)))
+        });
+    }
+
+    startWorkout() {
         this._workout.start();
     }
 
@@ -28,7 +35,7 @@ export class WorkoutService {
 
     async getAll() {
         try {
-            return this._repository.getAll()
+            return this._repository.getAll().map(this._fromJson.bind(this));
         } catch (err) {
             console.error(err);
         }
@@ -40,5 +47,9 @@ export class WorkoutService {
         } catch (err) {
             console.error(err);
         }
+    }
+
+    _fromJson(workoutDTO) {
+        return createWorkout(workoutDTO.uuid, workoutDTO.name, workoutDTO.exercises);
     }
 }

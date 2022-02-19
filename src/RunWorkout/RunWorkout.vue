@@ -1,6 +1,6 @@
 <template>
   <div class="RunWorkout">
-    <p v-if="exercise">{{ activeExercise.activity }}</p>
+    <Activity :name="activeExercise.activity"></Activity>
     <Timer :duration="duration"></Timer>
     <StopWorkout @stopped="handleStopWorkout"></StopWorkout>
   </div>
@@ -9,24 +9,19 @@
 <script>
 import StopWorkout from "./StopWorkout";
 import Timer from "./Timer";
+import Activity from "./Activity";
 import { WORKOUT_EVENTS } from "@/workout/workout";
 
 export default {
   name: "RunWorkout",
-  components: { Timer, StopWorkout },
+  components: { Timer, StopWorkout, Activity },
   inject: ["workoutService"],
   data() {
     return {
-      duration: "00:00",
+      duration: this.workoutService.getActiveWorkout().firstExercise.duration,
+      activeWorkout: this.workoutService.getActiveWorkout(),
+      activeExercise: this.workoutService.getActiveWorkout().firstExercise,
     };
-  },
-  computed: {
-    activeWorkout() {
-      return this.workoutService.getActiveWorkout();
-    },
-    activeExercise() {
-      return this.activeWorkout.firstExercise;
-    },
   },
   created() {
     this.activeWorkout.on(WORKOUT_EVENTS.TICK, (step) => {
